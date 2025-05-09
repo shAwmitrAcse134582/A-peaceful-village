@@ -12,6 +12,7 @@ void drawTree(float x, float y, float z);
 void drawWindmill(float x, float y, float z);
 void draw_object();
 void drawBush(float x, float y, float z);
+void drawRiver();
 
 // Camera position and rotation
 float cameraX = 0.0f;
@@ -111,6 +112,14 @@ float fanY = 0.0f;
 float fanSpeed = 0.02f;
 bool fanMovingRight = true;
 bool fanMovingUp = true;
+
+// Add these variables at the top with other global variables
+float riverFlow = 0.0f;
+float riverSpeed = 0.02f;
+
+// Add these global variables at the top with other animation variables
+float boatX = -18.0f;
+float boatSpeed = 0.01f;
 
 void DrawCircle(float cx, float cy, float r, int num_segments){
 
@@ -948,39 +957,25 @@ void draw_object()
     glVertex3f(20.0f, 0.0f, -20.0f);
     glEnd();
 
+    // Draw river with gap in front of houses
+    drawRiver();
+
     // Draw houses according to original positions
-    // House 1 (from original house1)
     drawHouse(-8.0f, 0.0f, -5.0f);
-    // Add bushes beside house 1
     drawBush(-9.5f, 0.0f, -4.0f);
     drawBush(-6.5f, 0.0f, -4.0f);
-    
-    // House 2 (from original house2)
     drawHouse(-4.0f, 0.0f, -5.0f);
-    // Add bushes beside house 2
     drawBush(-5.5f, 0.0f, -4.0f);
     drawBush(-2.5f, 0.0f, -4.0f);
-    
-    // House 3 (from original house3d)
     drawHouse(0.0f, 0.0f, -5.0f);
-    // Add bushes beside house 3
     drawBush(-1.5f, 0.0f, -4.0f);
     drawBush(1.5f, 0.0f, -4.0f);
 
     // Draw trees according to original positions
-    // Tree 1 (from original tree1)
     drawTree(-10.0f, 0.0f, -8.0f);
-    
-    // Tree 2 (from original tree2)
     drawTree(-6.0f, 0.0f, -8.0f);
-    
-    // Tree 3 (from original tree3)
     drawTree(2.0f, 0.0f, -8.0f);
-    
-    // Tree 4 (from original tree4)
     drawTree(6.0f, 0.0f, -8.0f);
-    
-    // Tree 5 (from original tree5)
     drawTree(10.0f, 0.0f, -8.0f);
 
     // Draw windmills
@@ -1464,6 +1459,15 @@ void idle()
         }
     }
     
+    // Update river flow
+    riverFlow += riverSpeed;
+    if (riverFlow >= 360.0f) {
+        riverFlow = 0.0f;
+    }
+    
+    // Update boat position
+    boatX += boatSpeed;
+    if (boatX > 18.0f) boatX = -18.0f;
     glutPostRedisplay();
 }
 
@@ -1731,5 +1735,54 @@ void drawBush(float x, float y, float z) {
         }
     }
     
+    glPopMatrix();
+}
+
+// Function to draw a simple boat
+void drawBoat(float x, float y, float z) {
+    glPushMatrix();
+    glTranslatef(x, y, z);
+    // Boat base (brown)
+    glColor3f(0.5f, 0.2f, 0.1f);
+    glBegin(GL_POLYGON);
+    glVertex3f(-1.0f, 0.0f, -0.4f);
+    glVertex3f(1.0f, 0.0f, -0.4f);
+    glVertex3f(0.7f, 0.2f, 0.0f);
+    glVertex3f(-0.7f, 0.2f, 0.0f);
+    glEnd();
+    // Boat top (white)
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glBegin(GL_QUADS);
+    glVertex3f(-0.4f, 0.2f, 0.0f);
+    glVertex3f(0.4f, 0.2f, 0.0f);
+    glVertex3f(0.4f, 0.4f, 0.0f);
+    glVertex3f(-0.4f, 0.4f, 0.0f);
+    glEnd();
+    glPopMatrix();
+}
+
+// Update drawRiver to draw the boat
+void drawRiver() {
+    glPushMatrix();
+    glTranslatef(0.0f, 0.01f, 2.0f);  // River in front of houses
+    // River base - sky blue, wide
+    glColor3f(0.53f, 0.81f, 0.98f);  // Sky blue color
+    glBegin(GL_QUADS);
+    glVertex3f(-20.0f, 0.0f, -2.5f);
+    glVertex3f(20.0f, 0.0f, -2.5f);
+    glVertex3f(20.0f, 0.0f, 2.5f);
+    glVertex3f(-20.0f, 0.0f, 2.5f);
+    glEnd();
+    // Animated water wave overlay
+    glColor3f(0.4f, 0.7f, 1.0f);  // Slightly lighter blue for wave
+    glBegin(GL_QUAD_STRIP);
+    for (float x = -20.0f; x <= 20.0f; x += 0.2f) {
+        float wave = 0.15f * sinf(2.0f * x + riverFlow * 1.5f);
+        glVertex3f(x, 0.02f + wave, -2.5f);
+        glVertex3f(x, 0.02f + wave, 2.5f);
+    }
+    glEnd();
+    // Draw the boat (centered in z)
+    drawBoat(boatX, 0.18f, 0.0f);
     glPopMatrix();
 }
