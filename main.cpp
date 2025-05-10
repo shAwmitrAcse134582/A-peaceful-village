@@ -78,7 +78,7 @@ GLfloat spin = 0.0;
 
 // Add these variables at the top with other global variables
 float cloudPositions[3] = {-15.0f, 0.0f, 0.0f};  // Array to store cloud positions
-float cloudSpeed = 0.05f;  // Speed of cloud movement
+float cloudSpeed = 0.001f;  // Speed of cloud movement
 
 // Add these variables at the top with other global variables
 float birdPositions[3][3] = {
@@ -86,7 +86,7 @@ float birdPositions[3][3] = {
     {-12.0f, 8.0f, -10.0f}, // Second bird position
     {-10.0f, 6.0f, -9.0f}   // Third bird position
 };
-float birdSpeed = 0.1f;
+float birdSpeed = 0.005f;
 float wingAngle = 0.0f;
 bool wingUp = true;
 
@@ -109,17 +109,17 @@ bool windmillMovingUp = true;
 // Add these variables at the top with other global variables
 float fanX = 0.0f;
 float fanY = 0.0f;
-float fanSpeed = 0.02f;
+float fanSpeed = 0.03f;
 bool fanMovingRight = true;
 bool fanMovingUp = true;
 
 // Add these variables at the top with other global variables
 float riverFlow = 0.0f;
-float riverSpeed = 0.02f;
+float riverSpeed = 0.002f;
 
 // Add these global variables at the top with other animation variables
 float boatX = -18.0f;
-float boatSpeed = 0.01f;
+float boatSpeed = 0.008f;
 
 void DrawCircle(float cx, float cy, float r, int num_segments){
 
@@ -793,7 +793,7 @@ glBegin(GL_POLYGON);
     glVertex3i(275+200, 350+50, 0);
     glVertex3i(320+200, 350+50+y_inc, x_rot);
     glVertex3i(320+200, 450+50+y_dec, x_rot);
-    glVertex3i(275+200, 450+50, 0);
+    glVertex3f(275+200, 450+50, 0);
 
 
 glEnd();
@@ -824,7 +824,7 @@ void circle(GLdouble rad)
 
 /////////////////////////////////////////////////
 
-/// *** Windmill_Stand_Model ***///
+/// * Windmill_Stand_Model ***///
 void Windmill_Stand_Model(){
 
     glColor3f(0.38, 0.41, 0.36);
@@ -960,27 +960,30 @@ void draw_object()
     // Draw river with gap in front of houses
     drawRiver();
 
-    // Draw houses according to original positions
-    drawHouse(-8.0f, 0.0f, -5.0f);
-    drawBush(-9.5f, 0.0f, -4.0f);
-    drawBush(-6.5f, 0.0f, -4.0f);
-    drawHouse(-4.0f, 0.0f, -5.0f);
-    drawBush(-5.5f, 0.0f, -4.0f);
-    drawBush(-2.5f, 0.0f, -4.0f);
-    drawHouse(0.0f, 0.0f, -5.0f);
-    drawBush(-1.5f, 0.0f, -4.0f);
-    drawBush(1.5f, 0.0f, -4.0f);
+    // Draw houses to match the 2D layout
+    drawHouse(-10.0f, 0.0f, -3.0f);   // Large brown house (front left)
+    drawBush(-11.0f, 0.0f, -2.0f);
+    drawBush(-9.0f, 0.0f, -2.0f);
+
+    drawHouse(-8.0f, 0.0f, -7.0f);   // Blue roof house (middle)
+   // drawBush(-6.0f, 0.0f, -5.0f);
+    //drawBush(-4.0f, 0.0f, -1.0f);
+
+    drawHouse(-5.0f, 0.0f, -7.0f);    // Orange roof house (right)
+    //drawBush(-1.0f, 0.0f, -5.0f);
+    //drawBush(1.0f, 0.0f, -1.0f);
 
     // Draw trees according to original positions
     drawTree(-10.0f, 0.0f, -8.0f);
-    drawTree(-6.0f, 0.0f, -8.0f);
-    drawTree(2.0f, 0.0f, -8.0f);
-    drawTree(6.0f, 0.0f, -8.0f);
-    drawTree(10.0f, 0.0f, -8.0f);
+    drawTree(-11.0f, 0.0f, -8.0f);
+    //drawTree(-6.0f, 0.0f, -8.0f);
+    drawTree(3.0f, 0.0f, -12.0f);
+    drawTree(6.0f, 0.0f, -10.0f);
+    drawTree(9.0f, 0.0f, -12.0f);
 
     // Draw windmills
-    drawWindmill(-8.0f, 0.0f, -8.0f);  // Left windmill
-    drawWindmill(0.0f, 0.0f, -8.0f);   // Center windmill
+    drawWindmill(-8.0f, 0.0f, -12.0f);  // Left windmill
+    drawWindmill(0.0f, 0.0f, -12.0f);   // Center windmill
 
     // Draw triangular hills in the background
     // First row of hills (closest)
@@ -1081,40 +1084,40 @@ void draw_object()
 void drawCloud(float x, float y, float z) {
     glPushMatrix();
     glTranslatef(x, y, z);
-    
+
     // Draw cloud using multiple spheres
     glColor3f(1.0f, 1.0f, 1.0f);  // White color for clouds
-    
+
     // Main cloud body (increased size from 0.5 to 1.0)
     glutSolidSphere(1.0f, 16, 16);
-    
+
     // Cloud puffs (increased size from 0.4 to 0.8 and adjusted positions)
     glPushMatrix();
     glTranslatef(0.6f, 0.0f, 0.0f);
     glutSolidSphere(0.8f, 16, 16);
     glPopMatrix();
-    
+
     glPushMatrix();
     glTranslatef(-0.6f, 0.0f, 0.0f);
     glutSolidSphere(0.8f, 16, 16);
     glPopMatrix();
-    
+
     glPushMatrix();
     glTranslatef(0.0f, 0.4f, 0.0f);
     glutSolidSphere(0.8f, 16, 16);
     glPopMatrix();
-    
+
     // Additional puffs for more volume
     glPushMatrix();
     glTranslatef(0.3f, 0.3f, 0.0f);
     glutSolidSphere(0.7f, 16, 16);
     glPopMatrix();
-    
+
     glPushMatrix();
     glTranslatef(-0.3f, 0.3f, 0.0f);
     glutSolidSphere(0.7f, 16, 16);
     glPopMatrix();
-    
+
     glPopMatrix();
 }
 
@@ -1122,11 +1125,11 @@ void drawCloud(float x, float y, float z) {
 void drawSun(float x, float y, float z) {
     glPushMatrix();
     glTranslatef(x, y, z);
-    
+
     // Draw main sun sphere (reduced size from 2.0 to 1.0)
     glColor3f(1.0f, 0.5f, 0.0f);  // Orange color for sun
     glutSolidSphere(1.0f, 32, 32);  // Smaller, smoother sphere for sun
-    
+
     // Add sun rays (reduced length from 3.0 to 1.5)
     glColor3f(1.0f, 0.7f, 0.0f);  // Lighter orange for rays
     for(int i = 0; i < 8; i++) {
@@ -1139,7 +1142,7 @@ void drawSun(float x, float y, float z) {
         glEnd();
         glPopMatrix();
     }
-    
+
     glPopMatrix();
 }
 
@@ -1147,23 +1150,23 @@ void drawSun(float x, float y, float z) {
 void drawBird(float x, float y, float z) {
     glPushMatrix();
     glTranslatef(x, y, z);
-    
+
     // Bird body
     glColor3f(0.2f, 0.2f, 0.2f);  // Dark gray color for bird
     glPushMatrix();
     glScalef(0.3f, 0.2f, 0.2f);  // Elongated body
     glutSolidSphere(1.0f, 16, 16);
     glPopMatrix();
-    
+
     // Bird head
     glPushMatrix();
     glTranslatef(0.2f, 0.1f, 0.0f);
     glutSolidSphere(0.15f, 16, 16);
     glPopMatrix();
-    
+
     // Bird wings
     glColor3f(0.3f, 0.3f, 0.3f);  // Slightly lighter gray for wings
-    
+
     // Left wing
     glPushMatrix();
     glTranslatef(0.0f, 0.0f, 0.0f);
@@ -1174,7 +1177,7 @@ void drawBird(float x, float y, float z) {
     glVertex3f(0.0f, 0.4f, 0.0f);
     glEnd();
     glPopMatrix();
-    
+
     // Right wing
     glPushMatrix();
     glTranslatef(0.0f, 0.0f, 0.0f);
@@ -1185,7 +1188,7 @@ void drawBird(float x, float y, float z) {
     glVertex3f(0.0f, -0.4f, 0.0f);
     glEnd();
     glPopMatrix();
-    
+
     glPopMatrix();
 }
 
@@ -1194,12 +1197,12 @@ void display(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    
+
     // Set up camera
     gluLookAt(cameraX, cameraY, cameraZ,
               cameraX + sin(cameraRotY), cameraY + sin(cameraRotX), cameraZ - cos(cameraRotY),
               0.0f, 1.0f, 0.0f);
-    
+
     // Draw sky with a more natural sky blue color
     glColor3f(0.529f, 0.808f, 0.922f);  // Sky blue color
     glBegin(GL_QUADS);
@@ -1208,20 +1211,20 @@ void display(void)
     glVertex3f(20.0f, 15.0f, 20.0f);
     glVertex3f(-20.0f, 15.0f, 20.0f);
     glEnd();
-    
+
     // Draw sun at the highest position
     drawSun(0.0f, 12.0f, -15.0f);
-    
+
     // Draw birds
     for (int i = 0; i < 3; i++) {
         drawBird(birdPositions[i][0], birdPositions[i][1], birdPositions[i][2]);
     }
-    
+
     // Draw clouds
     drawCloud(cloudPositions[0], 9.0f, -10.0f);
     drawCloud(cloudPositions[1], 8.0f, -5.0f);
     drawCloud(cloudPositions[2], 10.0f, -15.0f);
-    
+
     // Draw ground
     glColor3f(0.5f, 0.8f, 0.5f);
     glBegin(GL_QUADS);
@@ -1230,10 +1233,10 @@ void display(void)
     glVertex3f(20.0f, 0.0f, 20.0f);
     glVertex3f(20.0f, 0.0f, -20.0f);
     glEnd();
-    
+
     // Draw scene objects
     draw_object();
-    
+
     glutSwapBuffers();
 }
 
@@ -1260,7 +1263,7 @@ void keyboardFunc(unsigned char key, int x, int y)
         case 'e':
             cameraY -= 0.5f;
             break;
-            
+
         // Camera rotation
         case 'j':
             cameraRotY -= 0.1f;
@@ -1274,7 +1277,7 @@ void keyboardFunc(unsigned char key, int x, int y)
         case 'k':
             cameraRotX += 0.1f;
             break;
-            
+
         // Door and window controls
         case 'o':
             doorOpening = !doorOpening;
@@ -1282,7 +1285,7 @@ void keyboardFunc(unsigned char key, int x, int y)
         case 'p':
             windowOpening = !windowOpening;
             break;
-            
+
         // Day/Night cycle
         case 'n':
             day = 0;
@@ -1290,18 +1293,18 @@ void keyboardFunc(unsigned char key, int x, int y)
         case 'm':
             day = 1;
             break;
-            
+
         // Bush blooming control
         case 'b':
             bushesBloom = !bushesBloom;
             break;
-            
+
         // Exit
         case 27: // ESC key
             exit(0);
             break;
     }
-    
+
     glutPostRedisplay();
 }
 void update(int value) {
@@ -1352,25 +1355,25 @@ void updateDoor(int value) {
 void init(void)
 {
     glClearColor(0.6196078431372549, 0.9333333333333333, 0.996078431372549, 1.0);
-    
+
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
-    
+
     // Enable lighting
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_COLOR_MATERIAL);
-    
+
     // Set up light properties
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
     glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-    
+
     // Set up perspective projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(45.0f, 1.0f, 0.1f, 100.0f);
-    
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
@@ -1390,7 +1393,7 @@ void idle()
             doorAngle = 0.0f;
         }
     }
-    
+
     if (windowOpening) {
         windowAngle += 2.0f;
         if (windowAngle >= 90.0f) {
@@ -1402,13 +1405,13 @@ void idle()
             windowAngle = 0.0f;
         }
     }
-    
+
     // Update windmill rotation
     windmillRotation += 0.5f;
     if (windmillRotation >= 360.0f) {
         windmillRotation = 0.0f;
     }
-    
+
     // Update cloud positions
     for (int i = 0; i < 3; i++) {
         cloudPositions[i] += cloudSpeed;
@@ -1416,7 +1419,7 @@ void idle()
             cloudPositions[i] = -20.0f;
         }
     }
-    
+
     // Update bird positions and wing animation
     for (int i = 0; i < 3; i++) {
         birdPositions[i][0] += birdSpeed;
@@ -1424,7 +1427,7 @@ void idle()
             birdPositions[i][0] = -20.0f;
         }
     }
-    
+
     // Wing flapping animation
     if (wingUp) {
         wingAngle += 5.0f;
@@ -1437,7 +1440,7 @@ void idle()
             wingUp = true;
         }
     }
-    
+
     // Tree swaying animation
     if (swayRight) {
         treeSwayAngle += 0.2f;  // Slower swaying motion
@@ -1450,7 +1453,7 @@ void idle()
             swayRight = true;
         }
     }
-    
+
     // Bush blooming animation
     if (bushesBloom) {
         bushBloomAngle += 0.5f;
@@ -1458,13 +1461,13 @@ void idle()
             bushBloomAngle = 0.0f;
         }
     }
-    
+
     // Update river flow
     riverFlow += riverSpeed;
     if (riverFlow >= 360.0f) {
         riverFlow = 0.0f;
     }
-    
+
     // Update boat position
     boatX += boatSpeed;
     if (boatX > 18.0f) boatX = -18.0f;
@@ -1478,13 +1481,13 @@ int main(int argc, char** argv)
     glutInitWindowSize(800, 600);
     glutInitWindowPosition(100, 100);
     glutCreateWindow("3D Village Scene");
-    
+
     init();
-    
+
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboardFunc);
     glutIdleFunc(idle);
-    
+
     glutMainLoop();
     return 0;
 }
@@ -1492,7 +1495,7 @@ int main(int argc, char** argv)
 // Function to draw a 3D cube
 void drawCube(float size) {
     float half = size / 2.0f;
-    
+
     glBegin(GL_QUADS);
     // Front face
     glColor3f(0.8f, 0.8f, 0.8f);
@@ -1500,35 +1503,35 @@ void drawCube(float size) {
     glVertex3f(half, -half, half);
     glVertex3f(half, half, half);
     glVertex3f(-half, half, half);
-    
+
     // Back face
     glColor3f(0.8f, 0.8f, 0.8f);
     glVertex3f(-half, -half, -half);
     glVertex3f(-half, half, -half);
     glVertex3f(half, half, -half);
     glVertex3f(half, -half, -half);
-    
+
     // Top face
     glColor3f(0.5f, 0.5f, 0.5f);
     glVertex3f(-half, half, -half);
     glVertex3f(-half, half, half);
     glVertex3f(half, half, half);
     glVertex3f(half, half, -half);
-    
+
     // Bottom face
     glColor3f(0.5f, 0.5f, 0.5f);
     glVertex3f(-half, -half, -half);
     glVertex3f(half, -half, -half);
     glVertex3f(half, -half, half);
     glVertex3f(-half, -half, half);
-    
+
     // Right face
     glColor3f(0.7f, 0.7f, 0.7f);
     glVertex3f(half, -half, -half);
     glVertex3f(half, half, -half);
     glVertex3f(half, half, half);
     glVertex3f(half, -half, half);
-    
+
     // Left face
     glColor3f(0.7f, 0.7f, 0.7f);
     glVertex3f(-half, -half, -half);
@@ -1542,30 +1545,30 @@ void drawCube(float size) {
 void drawHouse(float x, float y, float z) {
     glPushMatrix();
     glTranslatef(x, y, z);
-    
+
     // Main house body
     drawCube(2.0f);
-    
+
     // Roof
     glColor3f(0.5f, 0.2f, 0.2f);
     glBegin(GL_TRIANGLES);
     glVertex3f(-1.2f, 1.0f, -1.2f);
     glVertex3f(0.0f, 2.0f, 0.0f);
     glVertex3f(1.2f, 1.0f, -1.2f);
-    
+
     glVertex3f(1.2f, 1.0f, -1.2f);
     glVertex3f(0.0f, 2.0f, 0.0f);
     glVertex3f(1.2f, 1.0f, 1.2f);
-    
+
     glVertex3f(1.2f, 1.0f, 1.2f);
     glVertex3f(0.0f, 2.0f, 0.0f);
     glVertex3f(-1.2f, 1.0f, 1.2f);
-    
+
     glVertex3f(-1.2f, 1.0f, 1.2f);
     glVertex3f(0.0f, 2.0f, 0.0f);
     glVertex3f(-1.2f, 1.0f, -1.2f);
     glEnd();
-    
+
     // Windows - Front (moved higher)
     // Left window
     glPushMatrix();
@@ -1579,7 +1582,7 @@ void drawHouse(float x, float y, float z) {
     glVertex3f(-0.2f, 0.2f, 0.0f);
     glEnd();
     glPopMatrix();
-    
+
     // Right window
     glPushMatrix();
     glTranslatef(0.6f, 0.4f, 1.01f);  // Moved window higher (y from 0.2 to 0.4)
@@ -1592,20 +1595,20 @@ void drawHouse(float x, float y, float z) {
     glVertex3f(-0.2f, 0.2f, 0.0f);
     glEnd();
     glPopMatrix();
-    
+
     // Door (centered between windows)
     glPushMatrix();
     glTranslatef(0.0f, -0.3f, 1.01f);  // Moved door up slightly (y from -0.5 to -0.3)
     glRotatef(doorAngle, 0.0f, 1.0f, 0.0f);
     glColor3f(0.6f, 0.3f, 0.1f);  // Brown color for door
     glBegin(GL_QUADS);
-    glVertex3f(-0.3f, -0.5f, 0.0f);
-    glVertex3f(0.3f, -0.5f, 0.0f);
-    glVertex3f(0.3f, 0.5f, 0.0f);
-    glVertex3f(-0.3f, 0.5f, 0.0f);
+    glVertex3f(-0.3f, -0.9f, 0.0f);
+    glVertex3f(0.3f, -0.9f, 0.0f);
+    glVertex3f(0.3f, 0.9f, 0.0f);
+    glVertex3f(-0.3f, 0.9f, 0.0f);
     glEnd();
     glPopMatrix();
-    
+
     glPopMatrix();
 }
 
@@ -1613,7 +1616,7 @@ void drawHouse(float x, float y, float z) {
 void drawTree(float x, float y, float z) {
     glPushMatrix();
     glTranslatef(x, y, z);
-    
+
     // Tree trunk (brownish-red)
     glColor3f(0.6156863, 0.0, 0.0);
     glBegin(GL_POLYGON);
@@ -1625,7 +1628,7 @@ void drawTree(float x, float y, float z) {
 
     // Tree leaves (green)
     glColor3f(0.0, 0.5, 0.0);
-    
+
     // First triangle
     glBegin(GL_POLYGON);
     glVertex3f(-0.5f, 1.5f, 0.0f);
@@ -1647,7 +1650,7 @@ void drawTree(float x, float y, float z) {
 void drawWindmill(float x, float y, float z) {
     glPushMatrix();
     glTranslatef(x, y, z);
-    
+
     // Windmill stand (made longer)
     glColor3f(0.38, 0.41, 0.36);
     glBegin(GL_POLYGON);
@@ -1669,7 +1672,7 @@ void drawWindmill(float x, float y, float z) {
     glPushMatrix();
     glTranslatef(0.0f, 2.5f, 0.0f);  // Moved up to match new stand height
     glRotatef(windmillRotation, 0.0f, 0.0f, 1.0f);
-    
+
     // Blade One (scaled up)
     glBegin(GL_POLYGON);
     glVertex3f(-0.08f, 0.0f, 0.0f);
@@ -1702,14 +1705,14 @@ void drawWindmill(float x, float y, float z) {
 void drawBush(float x, float y, float z) {
     glPushMatrix();
     glTranslatef(x, y, z);
-    
+
     // Bush base (green)
     glColor3f(0.0f, 0.5f, 0.0f);  // Dark green
     glPushMatrix();
     glScalef(0.8f, 0.6f, 0.8f);
     glutSolidSphere(0.5f, 16, 16);
     glPopMatrix();
-    
+
     // If blooming, add flowers
     if (bushesBloom) {
         // Red flowers
@@ -1722,7 +1725,7 @@ void drawBush(float x, float y, float z) {
             glutSolidSphere(0.1f, 8, 8);
             glPopMatrix();
         }
-        
+
         // Yellow flowers
         glColor3f(1.0f, 1.0f, 0.0f);  // Yellow
         for (int i = 0; i < 4; i++) {
@@ -1734,34 +1737,271 @@ void drawBush(float x, float y, float z) {
             glPopMatrix();
         }
     }
-    
+
     glPopMatrix();
 }
 
-// Function to draw a simple boat
+// Function to draw a better-looking 3D boat
 void drawBoat(float x, float y, float z) {
     glPushMatrix();
     glTranslatef(x, y, z);
-    // Boat base (brown)
-    glColor3f(0.5f, 0.2f, 0.1f);
+
+    // Complete hull as a unified mesh with merged sides at the ends
+    glColor3f(0.6f, 0.3f, 0.1f); // Rich brown wooden color
+
+    // Create the complete hull using triangle strips that merge at the ends
+    glBegin(GL_TRIANGLE_STRIP);
+
+    // Front tip point
+    glVertex3f(-1.4f, 0.3f, 0.0f);
+
+    // Left and right sides at front end (merged)
+    glVertex3f(-1.2f, 0.1f, 0.05f);
+    glVertex3f(-1.2f, 0.1f, -0.05f);
+
+    // Left and right sides gradually widening
+    glVertex3f(-1.0f, 0.0f, 0.15f);
+    glVertex3f(-1.0f, 0.0f, -0.15f);
+
+    glVertex3f(-0.8f, -0.05f, 0.25f);
+    glVertex3f(-0.8f, -0.05f, -0.25f);
+
+    // Middle section (widest)
+    glVertex3f(0.0f, -0.1f, 0.3f);
+    glVertex3f(0.0f, -0.1f, -0.3f);
+
+    // Back section gradually narrowing
+    glVertex3f(0.8f, -0.05f, 0.25f);
+    glVertex3f(0.8f, -0.05f, -0.25f);
+
+    glVertex3f(1.0f, 0.0f, 0.15f);
+    glVertex3f(1.0f, 0.0f, -0.15f);
+
+    // Back end narrowing to a point
+    glVertex3f(1.2f, 0.1f, 0.05f);
+    glVertex3f(1.2f, 0.1f, -0.05f);
+
+    // Back tip point
+    glVertex3f(1.5f, 0.35f, 0.0f);
+
+    glEnd();
+
+    // Create vertical sides of the boat
+    glBegin(GL_TRIANGLE_STRIP);
+
+    // Front tip
+    glVertex3f(-1.4f, 0.3f, 0.0f);
+
+    // Height of boat at each point along the length (left side)
+    glVertex3f(-1.2f, 0.1f, 0.05f);
+    glVertex3f(-1.2f, -0.1f, 0.05f);
+
+    glVertex3f(-1.0f, 0.0f, 0.15f);
+    glVertex3f(-1.0f, -0.1f, 0.15f);
+
+    glVertex3f(-0.8f, 0.1f, 0.25f);
+    glVertex3f(-0.8f, -0.1f, 0.25f);
+
+    glVertex3f(0.0f, 0.15f, 0.3f);
+    glVertex3f(0.0f, -0.1f, 0.3f);
+
+    glVertex3f(0.8f, 0.1f, 0.25f);
+    glVertex3f(0.8f, -0.1f, 0.25f);
+
+    glVertex3f(1.0f, 0.0f, 0.15f);
+    glVertex3f(1.0f, -0.1f, 0.15f);
+
+    glVertex3f(1.2f, 0.1f, 0.05f);
+    glVertex3f(1.2f, -0.1f, 0.05f);
+
+    // Back tip
+    glVertex3f(1.5f, 0.35f, 0.0f);
+
+    glEnd();
+
+    // Right side
+    glBegin(GL_TRIANGLE_STRIP);
+
+    // Front tip
+    glVertex3f(-1.4f, 0.3f, 0.0f);
+
+    // Height of boat at each point along the length (right side)
+    glVertex3f(-1.2f, 0.1f, -0.05f);
+    glVertex3f(-1.2f, -0.1f, -0.05f);
+
+    glVertex3f(-1.0f, 0.0f, -0.15f);
+    glVertex3f(-1.0f, -0.1f, -0.15f);
+
+    glVertex3f(-0.8f, 0.1f, -0.25f);
+    glVertex3f(-0.8f, -0.1f, -0.25f);
+
+    glVertex3f(0.0f, 0.15f, -0.3f);
+    glVertex3f(0.0f, -0.1f, -0.3f);
+
+    glVertex3f(0.8f, 0.1f, -0.25f);
+    glVertex3f(0.8f, -0.1f, -0.25f);
+
+    glVertex3f(1.0f, 0.0f, -0.15f);
+    glVertex3f(1.0f, -0.1f, -0.15f);
+
+    glVertex3f(1.2f, 0.1f, -0.05f);
+    glVertex3f(1.2f, -0.1f, -0.05f);
+
+    // Back tip
+    glVertex3f(1.5f, 0.35f, 0.0f);
+
+    glEnd();
+
+    // Add the boat bottom to complete the hull
     glBegin(GL_POLYGON);
-    glVertex3f(-1.0f, 0.0f, -0.4f);
-    glVertex3f(1.0f, 0.0f, -0.4f);
-    glVertex3f(0.7f, 0.2f, 0.0f);
-    glVertex3f(-0.7f, 0.2f, 0.0f);
+    // Bottom vertices - matching the hull shape
+    glVertex3f(-1.2f, -0.1f, 0.05f);
+    glVertex3f(-1.0f, -0.1f, 0.15f);
+    glVertex3f(-0.8f, -0.1f, 0.25f);
+    glVertex3f(0.0f, -0.1f, 0.3f);
+    glVertex3f(0.8f, -0.1f, 0.25f);
+    glVertex3f(1.0f, -0.1f, 0.15f);
+    glVertex3f(1.2f, -0.1f, 0.05f);
+    glVertex3f(1.2f, -0.1f, -0.05f);
+    glVertex3f(1.0f, -0.1f, -0.15f);
+    glVertex3f(0.8f, -0.1f, -0.25f);
+    glVertex3f(0.0f, -0.1f, -0.3f);
+    glVertex3f(-0.8f, -0.1f, -0.25f);
+    glVertex3f(-1.0f, -0.1f, -0.15f);
+    glVertex3f(-1.2f, -0.1f, -0.05f);
     glEnd();
-    // Boat top (white)
-    glColor3f(1.0f, 1.0f, 1.0f);
+
+    // Inner part of the boat (deck) - tapered shape
+    glColor3f(0.7f, 0.4f, 0.2f); // Lighter wood color
+    glBegin(GL_POLYGON);
+    // Front - narrower
+    glVertex3f(-0.9f, 0.0f, 0.12f);
+    // Front widening
+    glVertex3f(-0.7f, 0.0f, 0.2f);
+    // Middle - widest
+    glVertex3f(0.0f, 0.0f, 0.25f);
+    // Back widening
+    glVertex3f(0.7f, 0.0f, 0.2f);
+    // Back - narrower
+    glVertex3f(0.9f, 0.0f, 0.12f);
+    // Back - narrower other side
+    glVertex3f(0.9f, 0.0f, -0.12f);
+    // Back widening other side
+    glVertex3f(0.7f, 0.0f, -0.2f);
+    // Middle - widest other side
+    glVertex3f(0.0f, 0.0f, -0.25f);
+    // Front widening other side
+    glVertex3f(-0.7f, 0.0f, -0.2f);
+    // Front - narrower other side
+    glVertex3f(-0.9f, 0.0f, -0.12f);
+    glEnd();
+
+    // Cross beams (traditional support structure)
+    glColor3f(0.5f, 0.25f, 0.1f); // Darker wood color
+    for (float pos = -0.7f; pos <= 0.7f; pos += 0.4f) {
+        glBegin(GL_QUADS);
+        glVertex3f(pos, 0.01f, 0.25f);
+        glVertex3f(pos + 0.05f, 0.01f, 0.25f);
+        glVertex3f(pos + 0.05f, 0.01f, -0.25f);
+        glVertex3f(pos, 0.01f, -0.25f);
+        glEnd();
+    }
+
+    // Traditional rudder at the back
+    glColor3f(0.5f, 0.25f, 0.1f); // Dark wood color
+    glBegin(GL_TRIANGLES);
+    glVertex3f(1.1f, 0.0f, 0.05f);
+    glVertex3f(1.4f, -0.4f, 0.0f);
+    glVertex3f(1.1f, 0.0f, -0.05f);
+    glEnd();
+
+    // Mast (for sail) - taller and thinner
+    glColor3f(0.6f, 0.3f, 0.1f); // Wood color
+    glPushMatrix();
+    glTranslatef(-0.4f, 0.0f, 0.0f);
+    glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+    GLUquadricObj* quadric = gluNewQuadric();
+    gluCylinder(quadric, 0.02f, 0.015f, 1.5f, 8, 8);
+    gluDeleteQuadric(quadric);
+    glPopMatrix();
+
+    // Traditional triangular sail (like those used in Bangladesh)
+    glColor3f(0.9f, 0.85f, 0.7f); // Off-white canvas color
+
+    // Front face of sail
+    glBegin(GL_TRIANGLES);
+    glVertex3f(-0.4f, 1.5f, 0.0f);  // Top of mast
+    glVertex3f(-0.4f, 0.4f, 0.0f);  // Lower part of mast
+    glVertex3f(0.4f, 0.5f, 0.0f);   // Extended out
+    glEnd();
+
+    // Back face of sail (slightly offset)
+    glBegin(GL_TRIANGLES);
+    glVertex3f(-0.4f, 1.5f, 0.01f);
+    glVertex3f(-0.4f, 0.4f, 0.01f);
+    glVertex3f(0.4f, 0.5f, 0.01f);
+    glEnd();
+
+    // Traditional colors/patterns on boat sides
     glBegin(GL_QUADS);
-    glVertex3f(-0.4f, 0.2f, 0.0f);
-    glVertex3f(0.4f, 0.2f, 0.0f);
-    glVertex3f(0.4f, 0.4f, 0.0f);
-    glVertex3f(-0.4f, 0.4f, 0.0f);
+
+    // Front left decorative panel
+    glColor3f(0.9f, 0.2f, 0.2f); // Red
+    glVertex3f(-0.8f, 0.05f, 0.301f);
+    glVertex3f(-0.5f, 0.05f, 0.301f);
+    glVertex3f(-0.5f, 0.3f, 0.301f);
+    glVertex3f(-0.8f, 0.3f, 0.301f);
+
+    // Front right decorative panel
+    glVertex3f(-0.8f, 0.05f, -0.301f);
+    glVertex3f(-0.5f, 0.05f, -0.301f);
+    glVertex3f(-0.5f, 0.3f, -0.301f);
+    glVertex3f(-0.8f, 0.3f, -0.301f);
+
+    // Back left decorative panel
+    glColor3f(0.1f, 0.5f, 0.1f); // Green
+    glVertex3f(0.5f, 0.05f, 0.301f);
+    glVertex3f(0.8f, 0.05f, 0.301f);
+    glVertex3f(0.8f, 0.3f, 0.301f);
+    glVertex3f(0.5f, 0.3f, 0.301f);
+
+    // Back right decorative panel
+    glVertex3f(0.5f, 0.05f, -0.301f);
+    glVertex3f(0.8f, 0.05f, -0.301f);
+    glVertex3f(0.8f, 0.3f, -0.301f);
+    glVertex3f(0.5f, 0.3f, -0.301f);
     glEnd();
+
+    // Add small cargo area in the middle
+    glColor3f(0.3f, 0.2f, 0.1f); // Dark brown
+    glBegin(GL_QUADS);
+    // Front
+    glVertex3f(-0.2f, 0.01f, 0.2f);
+    glVertex3f(0.2f, 0.01f, 0.2f);
+    glVertex3f(0.2f, 0.15f, 0.2f);
+    glVertex3f(-0.2f, 0.15f, 0.2f);
+
+    // Back
+    glVertex3f(-0.2f, 0.01f, -0.2f);
+    glVertex3f(0.2f, 0.01f, -0.2f);
+    glVertex3f(0.2f, 0.15f, -0.2f);
+    glVertex3f(-0.2f, 0.15f, -0.2f);
+
+    // Left side
+    glVertex3f(-0.2f, 0.01f, 0.2f);
+    glVertex3f(-0.2f, 0.15f, 0.2f);
+    glVertex3f(-0.2f, 0.15f, -0.2f);
+    glVertex3f(-0.2f, 0.01f, -0.2f);
+
+    // Right side
+    glVertex3f(0.2f, 0.01f, 0.2f);
+    glVertex3f(0.2f, 0.15f, 0.2f);
+    glVertex3f(0.2f, 0.15f, -0.2f);
+    glVertex3f(0.2f, 0.01f, -0.2f);
+    glEnd();
+
     glPopMatrix();
 }
-
-// Update drawRiver to draw the boat
 void drawRiver() {
     glPushMatrix();
     glTranslatef(0.0f, 0.01f, 2.0f);  // River in front of houses
