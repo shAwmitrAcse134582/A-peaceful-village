@@ -13,6 +13,8 @@ void drawWindmill(float x, float y, float z);
 void draw_object();
 void drawBush(float x, float y, float z);
 void drawRiver();
+void drawMoon(float x, float y, float z);
+void drawStar(float x, float y, float z);
 
 // Camera position and rotation
 float cameraX = 0.0f;
@@ -33,6 +35,12 @@ bool windowOpening = false;
 GLfloat lightPosition[] = {5.0f, 5.0f, 5.0f, 1.0f};
 GLfloat ambientLight[] = {0.2f, 0.2f, 0.2f, 1.0f};
 GLfloat diffuseLight[] = {1.0f, 1.0f, 1.0f, 1.0f};
+
+// Add these variables at the top with other global variables
+GLfloat dayAmbientLight[] = {0.2f, 0.2f, 0.2f, 1.0f};    // Original ambient light
+GLfloat dayDiffuseLight[] = {1.0f, 1.0f, 1.0f, 1.0f};    // Original diffuse light
+GLfloat nightAmbientLight[] = {0.1f, 0.1f, 0.2f, 1.0f};  // Darker ambient light for night
+GLfloat nightDiffuseLight[] = {0.3f, 0.3f, 0.4f, 1.0f};  // Bluish diffuse light for night
 
 int posx=0,posy=0,posz=0;
 int day = 1;        //1 for day ,0 for night
@@ -1203,8 +1211,12 @@ void display(void)
               cameraX + sin(cameraRotY), cameraY + sin(cameraRotX), cameraZ - cos(cameraRotY),
               0.0f, 1.0f, 0.0f);
 
-    // Draw sky with a more natural sky blue color
-    glColor3f(0.529f, 0.808f, 0.922f);  // Sky blue color
+    // Draw sky with day/night color
+    if (day == 1) {
+        glColor3f(0.529f, 0.808f, 0.922f);  // Sky blue color for day
+    } else {
+        glColor3f(0.05f, 0.05f, 0.2f);      // Dark blue color for night
+    }
     glBegin(GL_QUADS);
     glVertex3f(-20.0f, 15.0f, -20.0f);
     glVertex3f(20.0f, 15.0f, -20.0f);
@@ -1212,8 +1224,26 @@ void display(void)
     glVertex3f(-20.0f, 15.0f, 20.0f);
     glEnd();
 
-    // Draw sun at the highest position
-    drawSun(0.0f, 12.0f, -15.0f);
+    // Set lighting based on day/night
+    if (day == 1) {
+        glLightfv(GL_LIGHT0, GL_AMBIENT, dayAmbientLight);
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, dayDiffuseLight);
+    } else {
+        glLightfv(GL_LIGHT0, GL_AMBIENT, nightAmbientLight);
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, nightDiffuseLight);
+    }
+
+    // Draw sun/moon based on day/night
+    if (day == 1) {
+        drawSun(0.0f, 12.0f, -15.0f);
+    } else {
+        drawMoon(0.0f, 12.0f, -15.0f);
+        // Draw stars only at night
+        drawStar(-8.0f, 10.0f, -15.0f);   // Left star
+        drawStar(8.0f, 11.0f, -15.0f);    // Right star
+        drawStar(-4.0f, 13.0f, -15.0f);   // Top left star
+        drawStar(4.0f, 12.0f, -15.0f);    // Top right star
+    }
 
     // Draw birds
     for (int i = 0; i < 3; i++) {
@@ -1286,12 +1316,9 @@ void keyboardFunc(unsigned char key, int x, int y)
             windowOpening = !windowOpening;
             break;
 
-        // Day/Night cycle
+        // Day/Night cycle toggle
         case 'n':
-            day = 0;
-            break;
-        case 'm':
-            day = 1;
+            day = !day;  // Toggle between day and night
             break;
 
         // Bush blooming control
@@ -2024,5 +2051,70 @@ void drawRiver() {
     glEnd();
     // Draw the boat (centered in z)
     drawBoat(boatX, 0.18f, 0.0f);
+    glPopMatrix();
+}
+
+// Add this function before the display() function
+void drawMoon(float x, float y, float z) {
+    glPushMatrix();
+    glTranslatef(x, y, z);
+
+    // Draw main moon sphere
+    glColor3f(0.9f, 0.9f, 0.9f);  // Light gray color for moon
+    glutSolidSphere(1.0f, 32, 32);
+
+    // Add craters
+    glColor3f(0.8f, 0.8f, 0.8f);  // Slightly darker gray for craters
+
+    // Crater 1
+    glPushMatrix();
+    glTranslatef(0.3f, 0.3f, 0.8f);
+    glutSolidSphere(0.2f, 16, 16);
+    glPopMatrix();
+
+    // Crater 2
+    glPushMatrix();
+    glTranslatef(-0.4f, 0.2f, 0.7f);
+    glutSolidSphere(0.15f, 16, 16);
+    glPopMatrix();
+
+    // Crater 3
+    glPushMatrix();
+    glTranslatef(0.2f, -0.3f, 0.8f);
+    glutSolidSphere(0.25f, 16, 16);
+    glPopMatrix();
+
+    // Crater 4
+    glPushMatrix();
+    glTranslatef(-0.3f, -0.2f, 0.7f);
+    glutSolidSphere(0.18f, 16, 16);
+    glPopMatrix();
+
+    glPopMatrix();
+}
+
+// Add this function before the display() function
+void drawStar(float x, float y, float z) {
+    glPushMatrix();
+    glTranslatef(x, y, z);
+    glScalef(0.7f, 0.7f, 0.7f); // Adjust size as needed
+
+    // Golden color
+    glColor3f(1.0f, 0.84f, 0.0f);
+
+    // 5-pointed star coordinates
+    float outerRadius = 0.4f;
+    float innerRadius = 0.17f;
+    float angle = M_PI / 2.0f; // Start at the top
+
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex3f(0.0f, 0.0f, 0.0f); // Center
+    for (int i = 0; i <= 10; ++i) {
+        float r = (i % 2 == 0) ? outerRadius : innerRadius;
+        float a = angle + i * M_PI / 5.0f;
+        glVertex3f(r * cos(a), r * sin(a), 0.0f);
+    }
+    glEnd();
+
     glPopMatrix();
 }
