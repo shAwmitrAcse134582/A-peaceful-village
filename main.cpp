@@ -15,6 +15,7 @@ void drawBush(float x, float y, float z);
 void drawRiver();
 void drawMoon(float x, float y, float z);
 void drawStar(float x, float y, float z);
+void drawCropField(float x, float y, float z);  // Add this line
 
 // Camera position and rotation
 float cameraX = 0.0f;
@@ -128,6 +129,11 @@ float riverSpeed = 0.002f;
 // Add these global variables at the top with other animation variables
 float boatX = -18.0f;
 float boatSpeed = 0.008f;
+
+// Add these variables at the top with other global variables
+float bushX = -11.0f;  // Initial X position of the bush
+float bushZ = -2.0f;   // Initial Z position of the bush
+float bushSpeed = 0.2f; // Speed of bush movement
 
 void DrawCircle(float cx, float cy, float r, int num_segments){
 
@@ -968,9 +974,13 @@ void draw_object()
     // Draw river with gap in front of houses
     drawRiver();
 
+    // Draw crop fields far from the river
+    drawCropField(15.0f, 0.0f, 10.0f);  // Crop field far to the right
+    drawCropField(-15.0f, 0.0f, 10.0f); // Crop field far to the left
+
     // Draw houses to match the 2D layout
     drawHouse(-10.0f, 0.0f, -3.0f);   // Large brown house (front left)
-    drawBush(-11.0f, 0.0f, -2.0f);
+    drawBush(bushX, 0.0f, bushZ);     // Use the controlled bush position
     drawBush(-9.0f, 0.0f, -2.0f);
 
     drawHouse(-8.0f, 0.0f, -7.0f);   // Blue roof house (middle)
@@ -1274,7 +1284,7 @@ void keyboardFunc(unsigned char key, int x, int y)
 {
     switch(key)
     {
-        // Camera movement
+        // Existing camera controls
         case 'w':
             cameraZ -= 0.5f;
             break;
@@ -1308,25 +1318,33 @@ void keyboardFunc(unsigned char key, int x, int y)
             cameraRotX += 0.1f;
             break;
 
-        // Door and window controls
+        // Bush movement controls
+        case '4':  // Move bush left
+            bushX -= bushSpeed;
+            break;
+        case '6':  // Move bush right
+            bushX += bushSpeed;
+            break;
+        case '8':  // Move bush forward
+            bushZ -= bushSpeed;
+            break;
+        case '5':  // Move bush backward
+            bushZ += bushSpeed;
+            break;
+
+        // Existing controls
         case 'o':
             doorOpening = !doorOpening;
             break;
         case 'p':
             windowOpening = !windowOpening;
             break;
-
-        // Day/Night cycle toggle
         case 'n':
-            day = !day;  // Toggle between day and night
+            day = !day;
             break;
-
-        // Bush blooming control
         case 'b':
             bushesBloom = !bushesBloom;
             break;
-
-        // Exit
         case 27: // ESC key
             exit(0);
             break;
@@ -2115,6 +2133,70 @@ void drawStar(float x, float y, float z) {
         glVertex3f(r * cos(a), r * sin(a), 0.0f);
     }
     glEnd();
+
+    glPopMatrix();
+}
+
+// Add this function before draw_object()
+void drawCropField(float x, float y, float z) {
+    glPushMatrix();
+    glTranslatef(x, y, z);
+
+    // Draw the field base (soil)
+    glColor3f(0.6f, 0.4f, 0.2f);  // Brown soil color
+    glBegin(GL_QUADS);
+    glVertex3f(-3.0f, 0.0f, -2.0f);
+    glVertex3f(3.0f, 0.0f, -2.0f);
+    glVertex3f(3.0f, 0.0f, 2.0f);
+    glVertex3f(-3.0f, 0.0f, 2.0f);
+    glEnd();
+
+    // Draw rows of crops
+    glColor3f(0.0f, 0.6f, 0.0f);  // Green color for crops
+    
+    // Draw multiple rows of crops
+    for(float row = -2.5f; row <= 2.5f; row += 0.5f) {
+        for(float col = -1.5f; col <= 1.5f; col += 0.3f) {
+            // Draw individual crop plant
+            glPushMatrix();
+            glTranslatef(col, 0.0f, row);
+            
+            // Draw the stem
+            glColor3f(0.0f, 0.4f, 0.0f);  // Darker green for stem
+            glBegin(GL_QUADS);
+            glVertex3f(-0.02f, 0.0f, -0.02f);
+            glVertex3f(0.02f, 0.0f, -0.02f);
+            glVertex3f(0.02f, 0.3f, -0.02f);
+            glVertex3f(-0.02f, 0.3f, -0.02f);
+            glEnd();
+
+            // Draw the leaves
+            glColor3f(0.0f, 0.6f, 0.0f);  // Lighter green for leaves
+            
+            // Left leaf
+            glBegin(GL_TRIANGLES);
+            glVertex3f(0.0f, 0.2f, 0.0f);
+            glVertex3f(-0.1f, 0.1f, 0.0f);
+            glVertex3f(0.0f, 0.3f, 0.0f);
+            glEnd();
+
+            // Right leaf
+            glBegin(GL_TRIANGLES);
+            glVertex3f(0.0f, 0.2f, 0.0f);
+            glVertex3f(0.1f, 0.1f, 0.0f);
+            glVertex3f(0.0f, 0.3f, 0.0f);
+            glEnd();
+
+            // Add some small fruits/grains at the top
+            glColor3f(0.8f, 0.8f, 0.0f);  // Yellow color for grains
+            glPushMatrix();
+            glTranslatef(0.0f, 0.35f, 0.0f);
+            glutSolidSphere(0.05f, 8, 8);
+            glPopMatrix();
+
+            glPopMatrix();
+        }
+    }
 
     glPopMatrix();
 }
